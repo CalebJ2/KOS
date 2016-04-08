@@ -110,7 +110,7 @@ namespace kOS.Safe.Test.Structures
         {
             var testValue = "FooBarFooBar";
             var findChar = "F";
-            var expectedList = new List<string> { string.Empty, "ooBar", "ooBar" };
+            var expectedList = new List<StringValue> { new StringValue(string.Empty), new StringValue("ooBar"), new StringValue("ooBar") };
             var sv = new StringValue(testValue);
 
             //Case Sensitive
@@ -140,11 +140,30 @@ namespace kOS.Safe.Test.Structures
         {
             var testValue = "FooBarFooBar";
             var findChar = 0;
-            var expectedIndex = "F";
+            var expectedIndex = new StringValue("F");
             var sv = new StringValue(testValue);
 
             //Case Sensitive
             Assert.AreEqual(expectedIndex, sv.GetIndex(0));
+        }
+
+        [Test]
+        public void CanNullCheck()
+        {
+            StringValue testValue = null;
+            Assert.IsTrue(testValue == null);
+            Assert.IsFalse(testValue != null);
+            Assert.IsTrue(null == testValue);
+            Assert.IsFalse(null != testValue);
+            Assert.AreEqual(testValue, null);
+            Assert.AreEqual(null, testValue);
+            testValue = new StringValue("FooBar");
+            Assert.IsTrue(testValue != null);
+            Assert.IsFalse(testValue == null);
+            Assert.IsTrue(null != testValue);
+            Assert.IsFalse(null == testValue);
+            Assert.AreNotEqual(testValue, null);
+            Assert.AreNotEqual(null, testValue);
         }
     }
 }

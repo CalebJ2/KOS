@@ -3,6 +3,7 @@ using kOS.Safe.Compilation;
 using kOS.Safe.Function;
 using kOS.Suffixed;
 using kOS.Safe.Exceptions;
+using kOS.Safe.Encapsulation;
 
 namespace kOS.Function
 {
@@ -94,6 +95,7 @@ namespace kOS.Function
         }
     }
 
+
     [Function("ln")]
     public class FunctionLn : FunctionBase
     {
@@ -123,13 +125,28 @@ namespace kOS.Function
     {
         public override void Execute(SharedObjects shared)
         {
-            object argument1 = PopValueAssert(shared);
-            object argument2 = PopValueAssert(shared);
+            Structure argument1 = PopStructureAssertEncapsulated(shared);
+            Structure argument2 = PopStructureAssertEncapsulated(shared);
             AssertArgBottomAndConsume(shared);
-            
-            Calculator calculator = Calculator.GetCalculator(argument1, argument2);
-            object result = calculator.Min(argument1, argument2);
-            ReturnValue = result;
+            Type scalarCompare = typeof(ScalarValue);
+            Type stringCompare = typeof(StringValue);
+            if (scalarCompare.IsInstanceOfType(argument1) && scalarCompare.IsInstanceOfType(argument2))
+            {
+                double d1 = ((ScalarValue)argument1).GetDoubleValue();
+                double d2 = ((ScalarValue)argument2).GetDoubleValue();
+                ReturnValue = Math.Min(d1, d2);
+            }
+            else if (scalarCompare.IsInstanceOfType(argument1) && scalarCompare.IsInstanceOfType(argument2))
+            {
+                string arg1 = argument1.ToString();
+                string arg2 = argument2.ToString();
+                int compareNum = string.Compare(arg1, arg2, StringComparison.OrdinalIgnoreCase);
+                ReturnValue = (compareNum < 0) ? arg1 : arg2;
+            }
+            else
+            {
+                throw new KOSException("Argument Mismatch: the function MIN only accepts matching arguments of type Scalar or String");
+            }
         }
     }
 
@@ -138,13 +155,28 @@ namespace kOS.Function
     {
         public override void Execute(SharedObjects shared)
         {
-            object argument1 = PopValueAssert(shared);
-            object argument2 = PopValueAssert(shared);
+            Structure argument1 = PopStructureAssertEncapsulated(shared);
+            Structure argument2 = PopStructureAssertEncapsulated(shared);
             AssertArgBottomAndConsume(shared);
-
-            Calculator calculator = Calculator.GetCalculator(argument1, argument2);
-            object result = calculator.Max(argument1, argument2);
-            ReturnValue = result;
+            Type scalarCompare = typeof(ScalarValue);
+            Type stringCompare = typeof(StringValue);
+            if (scalarCompare.IsInstanceOfType(argument1) && scalarCompare.IsInstanceOfType(argument2))
+            {
+                double d1 = ((ScalarValue)argument1).GetDoubleValue();
+                double d2 = ((ScalarValue)argument2).GetDoubleValue();
+                ReturnValue = Math.Max(d1, d2);
+            }
+            else if (scalarCompare.IsInstanceOfType(argument1) && scalarCompare.IsInstanceOfType(argument2))
+            {
+                string arg1 = argument1.ToString();
+                string arg2 = argument2.ToString();
+                int compareNum = string.Compare(arg1, arg2, StringComparison.OrdinalIgnoreCase);
+                ReturnValue = (compareNum > 0) ? arg1 : arg2;
+            }
+            else
+            {
+                throw new KOSException("Argument Mismatch: the function MAX only accepts matching arguments of type Scalar or String");
+            }
         }
     }
 
@@ -156,7 +188,7 @@ namespace kOS.Function
         public override void Execute(SharedObjects shared)
         {
             AssertArgBottomAndConsume(shared);
-            ReturnValue = random.NextDouble();
+            ReturnValue = Structure.FromPrimitive(random.NextDouble());
         }
     }
 
@@ -233,6 +265,31 @@ namespace kOS.Function
             }
             else
                 throw new KOSException("vector angle calculation attempted with a non-vector value");
+        }
+    }
+
+
+    [Function("char")]
+    public class FunctionChar : FunctionBase
+    {
+        public override void Execute(SharedObjects shared)
+        {
+            double argument = GetDouble(PopValueAssert(shared));
+            AssertArgBottomAndConsume(shared);
+            string result = new string((char) argument, 1);
+            ReturnValue = new StringValue(result);
+        }
+    }
+
+    [Function("unchar")]
+    public class FunctionUnchar : FunctionBase
+    {
+        public override void Execute(SharedObjects shared)
+        {
+            string argument = PopValueAssert(shared).ToString();
+            AssertArgBottomAndConsume(shared);
+            char result = argument.ToCharArray()[0];
+            ReturnValue = ScalarValue.Create(result);
         }
     }
 }

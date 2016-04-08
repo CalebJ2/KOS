@@ -6,7 +6,7 @@ using kOS.Safe.Binding;
 
 namespace kOS.Binding
 {
-    public class BindingManager : IDisposable
+    public class BindingManager : IDisposable, IBindingManager
     {
         private readonly SharedObjects shared;
         private readonly List<Binding> bindings = new List<Binding>();
@@ -126,7 +126,10 @@ namespace kOS.Binding
 
         public void UnBindAll()
         {
-            flightControl.UnBind();
+            if (flightControl != null)
+            {
+                flightControl.UnBind ();
+            }
         }
 
         public void Dispose()
@@ -137,7 +140,7 @@ namespace kOS.Binding
             }
         }
 
-        internal void SelectAutopilotMode(string autopilotMode)
+        public void SelectAutopilotMode(string autopilotMode)
         {
             if (flightControl != null)
             {

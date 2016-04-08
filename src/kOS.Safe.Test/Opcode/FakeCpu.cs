@@ -83,9 +83,34 @@ namespace kOS.Safe.Test.Opcode
             throw new NotImplementedException();
         }
 
-        public int GetStackSize()
+        public Encapsulation.Structure GetStructureEncapsulated(Encapsulation.Structure testValue, bool barewordOkay = false)
         {
             throw new NotImplementedException();
+        }
+
+        public Encapsulation.Structure PopStructureEncapsulated(bool barewordOkay = false)
+        {
+            return kOS.Safe.Encapsulation.Structure.FromPrimitiveWithAssert(PopValue(barewordOkay));
+        }
+
+        public Encapsulation.Structure PeekStructureEncapsulated(int digDepth, bool barewordOkay = false)
+        {
+            return kOS.Safe.Encapsulation.Structure.FromPrimitiveWithAssert(PeekValue(digDepth, barewordOkay));
+        }
+        
+        public object PopValueEncapsulated(bool barewordOkay = false)
+        {
+            return kOS.Safe.Encapsulation.Structure.FromPrimitive(PopValue(barewordOkay));
+        }
+
+        public object PeekValueEncapsulated(int digDepth, bool barewordOkay = false)
+        {
+            return kOS.Safe.Encapsulation.Structure.FromPrimitive(PeekValue(digDepth, barewordOkay));
+        }
+
+        public int GetStackSize()
+        {
+            return fakeStack.Count;
         }
 
         public void SetValue(string identifier, object value)
@@ -118,6 +143,11 @@ namespace kOS.Safe.Test.Opcode
             throw new NotImplementedException();
         }
 
+        public string DumpStack()
+        {
+            throw new NotImplementedException();
+        }
+
         public void RemoveVariable(string identifier)
         {
             throw new NotImplementedException();
@@ -134,6 +164,11 @@ namespace kOS.Safe.Test.Opcode
             get { throw new NotImplementedException(); }
         }
 
+        public List<string> ProfileResult
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public void AddTrigger(int triggerFunctionPointer)
         {
             throw new NotImplementedException();
@@ -144,7 +179,7 @@ namespace kOS.Safe.Test.Opcode
             throw new NotImplementedException();
         }
 
-        public void StartWait(double waitTime)
+        public double StartWait(double waitTime)
         {
             throw new NotImplementedException();
         }
@@ -195,6 +230,22 @@ namespace kOS.Safe.Test.Opcode
         }
 
         public void RunProgram(List<Compilation.Opcode> program)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public int InstructionsThisUpdate
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public void StartCompileStopwatch()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopCompileStopwatch()
         {
             throw new NotImplementedException();
         }

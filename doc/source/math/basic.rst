@@ -1,16 +1,20 @@
 .. _basic math:
 
+Basic Math Functions
+====================
+
+These functions are built-in for performing basic math operations in kOS.
+
 .. _constants:
 .. index:: Fundamental Constants
 
 Fundamental Constants
-=====================
+---------------------
 
 There is a bound variable called CONSTANT which contains some basic fundamental
 constants about the universe that you may find handy in your math operations.
 
 .. versionadded:: 0.18
-
     Prior to kOS version 0.18, ``constant`` was a function call, and
     therefore to say ``constant:pi``, you had to say ``constant():pi``.
     The function call ``constant()`` still exists and still works, but
@@ -74,7 +78,7 @@ constants about the universe that you may find handy in your math operations.
     This constant is provided mainly for the benefit of people who are
     playing with the mod "RemoteTech" installed, who may want to perform
     calculations about signal delays to hypothetical probes.  (Note that
-    if the probe already has a connection, you can 
+    if the probe already has a connection, you can
     :ref:`ask Remotetech directly <remotetech>` what the signal delay is.
 
 .. global:: Constant:AtmToKPa
@@ -91,7 +95,7 @@ constants about the universe that you may find handy in your math operations.
 
     If you have a pressure measurement expressed in kiloPascals (kiloNewtons
     per square meter), you can multiply it by this to get the equivalent
-    in atmospheres. 
+    in atmospheres.
 
 .. global:: Constant:DegToRad
 
@@ -117,7 +121,7 @@ constants about the universe that you may find handy in your math operations.
 .. index:: Mathematical Functions
 
 Mathematical Functions
-======================
+----------------------
 
 ==================== ===================================================
  Function             Description
@@ -134,6 +138,8 @@ Mathematical Functions
  :func:`ROUND(a)`     round to whole number
  :func:`ROUND(a,b)`   round to nearest place
  :func:`SQRT(a)`      square root
+ :func:`CHAR(a)`      character from unicode
+ :func:`UNCHAR(a)`    unicode from character
 ==================== ===================================================
 
 .. function:: ABS(a)
@@ -210,11 +216,29 @@ Mathematical Functions
 
         PRINT SQRT(7.89). // prints 2.80891438103763
 
+.. function:: CHAR(a)
+
+    :parameter a: (number)
+    :return: (string) single-character string containing the unicode character specified
+
+    ::
+
+        PRINT CHAR(34) + "Apples" + CHAR(34). // prints "Apples"
+
+.. function:: UNCHAR(a)
+
+    :parameter a: (string)
+    :return: (number) unicode number representing the character specified
+
+    ::
+
+        PRINT UNCHAR("A"). // prints 65
+
 .. _trig:
 .. index:: Trigonometric Functions
 
 Trigonometric Functions
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table::
     :header-rows: 1
@@ -227,7 +251,7 @@ Trigonometric Functions
     * - :func:`ARCSIN(x)`
     * - :func:`ARCCOS(x)`
     * - :func:`ARCTAN(x)`
-    * - :func:`ARCTAN2(x,y)`
+    * - :func:`ARCTAN2(y,x)`
 
 .. function:: SIN(a)
 
@@ -258,7 +282,7 @@ Trigonometric Functions
 
 .. function:: ARCSIN(x)
 
-    :parameter x: (scalar)
+    :parameter x: (:ref:`scalar <scalar>`)
     :return: (deg) angle whose sine is x
 
     ::
@@ -267,7 +291,7 @@ Trigonometric Functions
 
 .. function:: ARCCOS(x)
 
-    :parameter x: (scalar)
+    :parameter x: (:ref:`scalar <scalar>`)
     :return: (deg) angle whose cosine is x
 
     ::
@@ -276,7 +300,7 @@ Trigonometric Functions
 
 .. function:: ARCTAN(x)
 
-    :parameter x: (scalar)
+    :parameter x: (:ref:`scalar <scalar>`)
     :return: (deg) angle whose tangent is x
 
     ::
@@ -285,8 +309,8 @@ Trigonometric Functions
 
 .. function:: ARCTAN2(y,x)
 
-    :parameter y: (scalar)
-    :parameter x: (scalar)
+    :parameter y: (:ref:`scalar <scalar>`)
+    :parameter x: (:ref:`scalar <scalar>`)
     :return: (deg) angle whose tangent is :math:`\frac{y}{x}`
 
     ::

@@ -16,15 +16,18 @@ namespace kOS.Safe.Screen
         
         public int BeepsPending {get; set;}
         
-        // These next two things really belong in TermWindow, but then they can't be reached from
+        // These next 6 things really belong in TermWindow, but then they can't be reached from
         // TerminalStruct over in kOS.Safe because TermWindow is just too full of
-        // Unity stuff to move it to kOS.Safe, or even provide all its interfaces
-        // in an ITermWindow:
-        
+        // Unity stuff to move it to kOS.Safe, or even provide all its methods
+        // in an ITermWindow interface:
+        // ---------------------------------------------------------------------------        
         /// <summary>True means the terminal screen should be shown in reversed colors.</summary>
         public bool ReverseScreen {get; set;}
         /// <summary>True means a beep should make the terminal screen flash silently in lieu of an audio beep.</summary>
         public bool VisualBeep {get; set;}
+        public int CharacterPixelWidth { get; set; }
+        public int CharacterPixelHeight { get; set; }
+        public float Brightness { get; set; }
 
         
         public int ColumnCount { get; private set; }
@@ -99,10 +102,13 @@ namespace kOS.Safe.Screen
         /// in need of a diff check.
         /// </summary>
         /// <param name="startRow">Starting with this row number</param>
-        /// <param name="numRows">for this many rows</param>
+        /// <param name="numRows">for this many rows, or up to the max row the buffer has if this number is too large</param>
         public void MarkRowsDirty(int startRow, int numRows)
         {
-            for( int i = 0; i < numRows ; ++i)
+            // Mark fewer rows than asked to if the reqeusted number would have blown past the end of the buffer:
+            int numSafeRows = (numRows + startRow <= buffer.Count) ? numRows : buffer.Count - startRow;
+            
+            for( int i = 0; i < numSafeRows ; ++i)
                 buffer[startRow + i].TouchTime();
         }
 

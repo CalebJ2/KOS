@@ -1,5 +1,6 @@
 ﻿using System;
 using kOS.Safe.Encapsulation;
+using kOS.Safe.Encapsulation.Suffixes;
 using kOS.Safe.Exceptions;
 using kOS.Safe.Utilities;
 using NSubstitute;
@@ -48,7 +49,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CanAddGlobalSuffix()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             var testStuffixName = Guid.NewGuid().ToString();
             testSuffix.Get().Returns(testObject);
@@ -60,7 +61,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CanAddGlobalSuffixWithTwoNames()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             var testStructure = new TestStructure();
             var suffixName = Guid.NewGuid().ToString();
@@ -76,7 +77,7 @@ namespace kOS.Safe.Test.Structure
         public void GlobalSuffixesAreInFactGlobal()
         {
             var suffixName = Guid.NewGuid().ToString();
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             testSuffix.Get().Returns(testObject);
 
@@ -88,7 +89,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CanAddInstanceSuffix()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             var testStructure = new TestStructure();
             var suffixName = Guid.NewGuid().ToString();
@@ -101,7 +102,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CantFindSuffixThatDoesntExist()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             var testStructure = new TestStructure();
             var suffixName = Guid.NewGuid().ToString();
@@ -118,7 +119,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CantFindStaticSuffixThatDoesntExist()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             var testStructure = new TestStructure();
             var suffixName = Guid.NewGuid().ToString();
@@ -135,7 +136,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void InstanceSuffixesAreInFactInstanced()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             var testStructure = new TestStructure();
             var suffixName = Guid.NewGuid().ToString();
@@ -155,11 +156,11 @@ namespace kOS.Safe.Test.Structure
         {
             var testStructure = new TestStructure();
 
-            var testObject1 = new object();
+            var testObject1 = Substitute.For<ISuffixResult>();
             var testSuffix1 = Substitute.For<ISuffix>();
             testSuffix1.Get().Returns(testObject1);
 
-            var testObject2 = new object();
+            var testObject2 = Substitute.For<ISuffixResult>();
             var testSuffix2 = Substitute.For<ISuffix>();
             testSuffix2.Get().Returns(testObject2);
 
@@ -177,7 +178,7 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CanSetInstanceSuffix()
         {
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
 
             object internalStorage = null;
             var testSuffix = Substitute.For<ISetSuffix>();
@@ -203,13 +204,13 @@ namespace kOS.Safe.Test.Structure
             var testStructure = new TestStructure();
             var suffixName = Guid.NewGuid().ToString();
 
-            var testObject = new object();
+            var testObject = Substitute.For<ISuffixResult>();
             var testSuffix = Substitute.For<ISuffix>();
             testSuffix.Get().ReturnsForAnyArgs(info => testObject);
             testStructure.TestAddInstanceSuffix(suffixName, testSuffix);
 
             var testSuffixStatic = Substitute.For<ISuffix>();
-            testSuffixStatic.Get().ReturnsForAnyArgs(info => int.MaxValue);
+            testSuffixStatic.Get().ReturnsForAnyArgs(new SuffixResult(ScalarIntValue.MaxValue()));
             TestStructure.TestAddGlobal<object>(suffixName, testSuffixStatic);
 
             Assert.IsNotNull(testStructure.GetSuffix(suffixName));
@@ -219,8 +220,8 @@ namespace kOS.Safe.Test.Structure
         [Test]
         public void CanSetSynonymInstanceSuffix()
         {
-            var testObject = new object();
-            var testObject2 = new object();
+            var testObject = Substitute.For<ISuffixResult>();
+            var testObject2 = Substitute.For<ISuffixResult>();
 
             object internalStorage = null;
             var testSuffix = Substitute.For<ISetSuffix>();
