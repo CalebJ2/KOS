@@ -8,6 +8,8 @@ namespace kOS.AddOns.TrajectoriesAddon
 {
     public class Addon : Suffixed.Addon
     {
+        //Code is arranged to never use Trajectories.Trajectory in a function unless it is sure a compatible Trajectories version is installed.
+        private static bool? available = null;
         public Addon(SharedObjects shared) : base("TR", shared)
         {
             InitializeSuffixes();
@@ -20,12 +22,56 @@ namespace kOS.AddOns.TrajectoriesAddon
 
         private kOS.Suffixed.Vector GetImpactPos()
         {
-            if (Available() == false)
-            {
-                return new kOS.Suffixed.Vector(0, 0, 0);
-            } else
+            if (Available() == true)
             {
                 return TrajectoryImpactPos();
+            } else
+            {
+                return new kOS.Suffixed.Vector(0, 0, 0);
+            }
+        }
+        public override bool Available()
+        {
+            if (available == true)
+            {
+                return true;
+            } else if (available == false)
+            {
+                return false;
+            } else// if (available == null)
+            {               
+                Type TrType = AssemblyLoader.loadedAssemblies
+                    .Select(a => a.assembly.GetExportedTypes())
+                    .SelectMany(t => t)
+                    .FirstOrDefault(t => t.FullName == "Trajectories.Trajectory"); // Equivalent to Type.GetType("Trajectories.Trajectory") except it works;
+                //Debug.Log("Trajectories.Trajectory Type: " + TrType + ", null?: " + (TrType == null));
+                if (TrType == null)
+                {
+                    available = false;
+                    return false;
+                }
+
+                MethodInfo trMethod = TrType.GetMethod("TrajectoriesInstalled");
+                //Debug.Log("TrajectoriesInstalled method info: " + myMethod + ", null?: " + (trMethod == null));
+                if (trMethod == null)
+                {
+                    available = false;
+                    return false;
+                }
+
+                object myTrajectory = Activator.CreateInstance(TrType);
+                object value = trMethod.Invoke(myTrajectory, new object[] { });
+                //Debug.Log("Instance value: " + value + ", null?: " + (value == null));
+
+                if ((bool)value == true)
+                {
+                    available = true;
+                    return true;
+                } else
+                {
+                    available = false;
+                    return false;
+                }
             }
         }
         private kOS.Suffixed.Vector TrajectoryImpactPos()
@@ -51,31 +97,5 @@ namespace kOS.AddOns.TrajectoriesAddon
             }
             return new kOS.Suffixed.Vector(0, 0, 0);
         }
-        public override bool Available()
-        {
-            Type TrType = null;//Type.GetType("Trajectories.Trajectory");
-            TrType = AssemblyLoader.loadedAssemblies
-                .Select(a => a.assembly.GetExportedTypes())
-                .SelectMany(t => t)
-                .FirstOrDefault(t => t.FullName == "Trajectories.Trajectory");
-            //Debug.Log("Trajectories.Trajectory Type: " + TrType + ", null?: " + (TrType == null));
-            if (TrType == null) return false;
-
-            MethodInfo myMethod = TrType.GetMethod("TrajectoriesInstalled");
-            //Debug.Log("TrajectoriesInstalled method info: " + myMethod + ", null?: " + (myMethod == null));
-            if (myMethod == null) return false;
-
-            object myTrajectory = Activator.CreateInstance(TrType);
-            object value = myMethod.Invoke(myTrajectory, new object[]{});
-            //Debug.Log("Instance value: " + value + ", null?: " + (value == null));
-
-            if ((bool)value == true) {
-                return true;
-            } else
-            {
-                return false;
-            }
-        }
-
     }
 }
