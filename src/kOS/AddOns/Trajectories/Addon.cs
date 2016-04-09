@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using kOS.Safe.Encapsulation;
 using kOS.Safe.Encapsulation.Suffixes;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,7 @@ using System;
 
 namespace kOS.AddOns.TrajectoriesAddon
 {
+    [kOS.Safe.Utilities.KOSNomenclature("TRAddon")]
     public class Addon : Suffixed.Addon
     {
         //Code is arranged to never use Trajectories.Trajectory in a function unless it is sure a compatible Trajectories version is installed.
@@ -30,7 +32,7 @@ namespace kOS.AddOns.TrajectoriesAddon
                 return new kOS.Suffixed.Vector(0, 0, 0);
             }
         }
-        public override bool Available()
+        public override BooleanValue Available()
         {
             if (available == true)
             {

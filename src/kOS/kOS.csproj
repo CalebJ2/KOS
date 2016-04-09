@@ -50,6 +50,7 @@
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+	</Reference>
     <Reference Include="KSPAPIExtensions">
       <HintPath>..\..\Resources\GameData\kOS\Plugins\KSPAPIExtensions.dll</HintPath>
     </Reference>
