@@ -10,8 +10,9 @@ namespace kOS.AddOns.TrajectoriesAddon
     [kOS.Safe.Utilities.KOSNomenclature("TRAddon")]
     public class Addon : Suffixed.Addon
     {
-        //Code is arranged to never use Trajectories.Trajectory in a function unless it is sure a compatible Trajectories version is installed.
-        private static bool? available = null;
+        protected readonly SharedObjects shared;
+        private bool? available = null;
+        private MethodInfo trImpactMethod = null;
         public Addon(SharedObjects shared) : base("TR", shared)
         {
             InitializeSuffixes();
@@ -26,7 +27,24 @@ namespace kOS.AddOns.TrajectoriesAddon
         {
             if (Available() == true)
             {
-                return TrajectoryImpactPos();
+                var ship = FlightGlobals.ActiveVessel;
+                var body = ship.orbit.referenceBody;
+
+                Vector3? impactPos = (Vector3?)trImpactMethod.Invoke(null, new object[] { });
+                if (impactPos != null)
+                {
+                    var worldImpactPos = (Vector3d)impactPos + body.position;
+                    var lat = body.GetLatitude(worldImpactPos);
+                    var lng = body.GetLongitude(worldImpactPos);
+                    while (lng < -180)
+                        lng += 360;
+                    while (lng > 180)
+                        lng -= 360;
+                    return new kOS.Suffixed.Vector(lat, 1, lng);
+                }
+                else {
+                    return new kOS.Suffixed.Vector(0, 0, 0);
+                }
             } else
             {
                 return new kOS.Suffixed.Vector(0, 0, 0);
@@ -41,29 +59,29 @@ namespace kOS.AddOns.TrajectoriesAddon
             {
                 return false;
             } else// if (available == null)
-            {               
-                Type TrType = AssemblyLoader.loadedAssemblies
+            {
+                Type trajectoriesType = AssemblyLoader.loadedAssemblies
                     .Select(a => a.assembly.GetExportedTypes())
                     .SelectMany(t => t)
-                    .FirstOrDefault(t => t.FullName == "Trajectories.Trajectory"); // Equivalent to Type.GetType("Trajectories.Trajectory") except it works;
-                //Debug.Log("Trajectories.Trajectory Type: " + TrType + ", null?: " + (TrType == null));
-                if (TrType == null)
+                    .FirstOrDefault(t => t.FullName == "Trajectories.API"); // Equivalent to Type.GetType("Trajectories.API") except it works
+                if (trajectoriesType == null)
                 {
+                    Debug.Log("Trajectories.API Type Null. Trajectories not installed or wrong version.");
                     available = false;
                     return false;
                 }
 
-                MethodInfo trMethod = TrType.GetMethod("TrajectoriesInstalled");
-                //Debug.Log("TrajectoriesInstalled method info: " + myMethod + ", null?: " + (trMethod == null));
-                if (trMethod == null)
+                MethodInfo trAvailableMethod = trajectoriesType.GetMethod("APIAvailable");
+                trImpactMethod = trajectoriesType.GetMethod("impactPosition");
+                if (trAvailableMethod == null || trImpactMethod == null)
                 {
+                    Debug.Log("Trajectories.API APIAvailable or impactPosition method is null. Incompatible Trajectories version");
                     available = false;
                     return false;
                 }
 
-                object myTrajectory = Activator.CreateInstance(TrType);
-                object value = trMethod.Invoke(myTrajectory, new object[] { });
-                //Debug.Log("Instance value: " + value + ", null?: " + (value == null));
+                object trajectoriesAPIInstance = Activator.CreateInstance(trajectoriesType);
+                object value = trAvailableMethod.Invoke(trajectoriesAPIInstance, new object[] { });
 
                 if ((bool)value == true)
                 {
@@ -71,33 +89,11 @@ namespace kOS.AddOns.TrajectoriesAddon
                     return true;
                 } else
                 {
+                    Debug.Log("Trajectories probably installed but not working maybe, idk.");
                     available = false;
                     return false;
                 }
             }
-        }
-        private kOS.Suffixed.Vector TrajectoryImpactPos()
-        {
-            var ship = FlightGlobals.ActiveVessel;
-            var body = ship.orbit.referenceBody;
-
-            Trajectories.Trajectory myTrajectory = Trajectories.Trajectory.fetch;
-            myTrajectory.Update();
-            foreach (var patch in myTrajectory.patches)
-            {
-                if (patch.impactPosition.HasValue)
-                {
-                    var worldImpactPos = patch.impactPosition.Value + body.position;
-                    var lat = body.GetLatitude(worldImpactPos);
-                    var lng = body.GetLongitude(worldImpactPos);
-                    while (lng < -180)
-                        lng += 360;
-                    while (lng > 180)
-                        lng -= 360;
-                    return new kOS.Suffixed.Vector(lat, 1, lng);
-                }
-            }
-            return new kOS.Suffixed.Vector(0, 0, 0);
         }
     }
 }

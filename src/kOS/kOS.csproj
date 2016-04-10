@@ -44,13 +44,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Trajectories, Version=1.4.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\Trajectories\Plugin\Trajectories.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Include="KSPAPIExtensions">
       <HintPath>..\..\Resources\GameData\kOS\Plugins\KSPAPIExtensions.dll</HintPath>
     </Reference>
@@ -232,7 +228,5 @@
   -->
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="AddOns\OrbitalScience\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
