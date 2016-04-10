@@ -10,7 +10,6 @@ namespace kOS.AddOns.TrajectoriesAddon
     [kOS.Safe.Utilities.KOSNomenclature("TRAddon")]
     public class Addon : Suffixed.Addon
     {
-        protected readonly SharedObjects shared;
         private bool? available = null;
         private MethodInfo trImpactMethod = null;
         public Addon(SharedObjects shared) : base("TR", shared)
@@ -20,10 +19,10 @@ namespace kOS.AddOns.TrajectoriesAddon
 
         private void InitializeSuffixes()
         {
-            AddSuffix("IMPACTPOS", new Suffix<kOS.Suffixed.Vector>(GetImpactPos, "Get impact position. Returns vector(lat,1,lng) z=0 if position isn't available"));
+            AddSuffix("IMPACTPOS", new Suffix<kOS.Suffixed.GeoCoordinates>(GetImpactPos, "Get impact position coordinates. Returns LATLNG(0,0) if no position is available."));
         }
 
-        private kOS.Suffixed.Vector GetImpactPos()
+        private kOS.Suffixed.GeoCoordinates GetImpactPos()
         {
             if (Available() == true)
             {
@@ -40,14 +39,14 @@ namespace kOS.AddOns.TrajectoriesAddon
                         lng += 360;
                     while (lng > 180)
                         lng -= 360;
-                    return new kOS.Suffixed.Vector(lat, 1, lng);
+                    return new kOS.Suffixed.GeoCoordinates(shared, lat, lng);
                 }
                 else {
-                    return new kOS.Suffixed.Vector(0, 0, 0);
+                    return new kOS.Suffixed.GeoCoordinates(shared, 0, 0);
                 }
             } else
             {
-                return new kOS.Suffixed.Vector(0, 0, 0);
+                return new kOS.Suffixed.GeoCoordinates(shared, 0, 0);
             }
         }
         public override BooleanValue Available()
@@ -58,7 +57,7 @@ namespace kOS.AddOns.TrajectoriesAddon
             } else if (available == false)
             {
                 return false;
-            } else// if (available == null)
+            } else// if (available == null) check for Trajectories mod via reflection and init trImpactMethod
             {
                 Type trajectoriesType = AssemblyLoader.loadedAssemblies
                     .Select(a => a.assembly.GetExportedTypes())
