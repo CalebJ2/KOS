@@ -14,13 +14,13 @@ using kOS.Safe.Screen;
 using kOS.Safe.Utilities;
 using kOS.Utilities;
 using KSP.IO;
-using KSPAPIExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using kOS.Safe.Execution;
 using UnityEngine;
 using kOS.Safe.Encapsulation;
+using KSP.UI;
 
 namespace kOS.Module
 {
@@ -204,9 +204,16 @@ namespace kOS.Module
         }
 
         //implement IPartCostModifier component
-        public float GetModuleCost(float defaultCost)
+        public float GetModuleCost(float defaultCost, ModifierStagingSituation sit)
         {
+            // the 'sit' arg is irrelevant to us, but the interface requires it.
+
             return additionalCost;
+        }
+        //implement IPartMassModifier component
+        public ModifierChangeWhen GetModuleCostChangeWhen()
+        {
+            return ModifierChangeWhen.FIXED;
         }
 
         private void UpdateCostAndMass()
@@ -221,10 +228,17 @@ namespace kOS.Module
         }
 
         //implement IPartMassModifier component
-        public float GetModuleMass(float defaultMass)
+        public float GetModuleMass(float defaultMass, ModifierStagingSituation sit)
         {
+            // the 'sit' arg is irrelevant to us, but the interface requires it.
+            
             return part.mass - defaultMass; //copied this fix from ProceduralParts mod as we already changed part.mass
             //return additionalMass;
+        }
+        //implement IPartMassModifier component
+        public ModifierChangeWhen GetModuleMassChangeWhen()
+        {
+            return ModifierChangeWhen.FIXED;
         }
 
         public override void OnStart(StartState state)
@@ -784,8 +798,8 @@ namespace kOS.Module
 
         public void SetAutopilotMode(int mode)
         {
-            RUIToggleButton[] modeButtons = FindObjectOfType<VesselAutopilotUI>().modeButtons;
-            modeButtons.ElementAt(mode).SetTrue();
+            UIStateToggleButton[] modeButtons = FindObjectOfType<VesselAutopilotUI>().modeButtons;
+            modeButtons.ElementAt(mode).SetState(true);
         }
 
         public string BootFilename
