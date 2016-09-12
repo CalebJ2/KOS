@@ -63,10 +63,10 @@ namespace kOS.AddOns.TrajectoriesAddon
             }
             if (Available() == true)
             {
-                Vector3 vect = TRWrapper.impactVelocity();
-                if (impactVect != null)
+                Vector3 impactvect = TRWrapper.impactVelocity();
+                if (impactvect != null)
                 {
-                    return new Vector(vect.x, vect.y, vect.z);
+                    return new Vector(impactvect.x, impactvect.y, impactvect.z);
                 }
                 else {
                     throw new KOSException("Impact velocity is not available. Remember to check addons:tr:hasImpact");
