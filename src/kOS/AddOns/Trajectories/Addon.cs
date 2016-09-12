@@ -17,10 +17,12 @@ namespace kOS.AddOns.TrajectoriesAddon
         private void InitializeSuffixes()
         {
             AddSuffix("IMPACTPOS", new Suffix<GeoCoordinates>(impactPos, "Get impact position coordinates."));
+            AddSuffix("IMPACTVEL", new Suffix<Vector>(impactVel, "Get impact velocity"));
             AddSuffix("HASIMPACT", new Suffix<BooleanValue>(hasImpact, "Check whether Trajectories has predicted an impact position for the current vessel."));
             AddSuffix("CORRECTEDVECT", new Suffix<Vector>(correctedDirection, "PlannedVect somewhat corrected to glide ship towards target."));
             AddSuffix("PLANNEDVECT", new Suffix<Vector>(plannedDirection, "Direction to point to follow predicted trajectory."));
             AddSuffix("SETTARGET", new OneArgsSuffix<GeoCoordinates>(setTarget, "Set correctedVect target."));
+            AddSuffix("SPACEORBIT", new Suffix<Orbit>(spaceOrb, "Get orbit structure."));
         }
 
         private kOS.Suffixed.GeoCoordinates impactPos()
@@ -53,6 +55,28 @@ namespace kOS.AddOns.TrajectoriesAddon
                 throw new KOSUnavailableAddonException("impactPos", "Trajectories");
             }
         }
+        private Vector impactVel()
+        {
+            if (shared.Vessel != FlightGlobals.ActiveVessel)
+            {
+                throw new KOSException("You may only call addons:TR:impactVel from the active vessel. Always check addons:tr:hasImpact");
+            }
+            if (Available() == true)
+            {
+                Vector3 vect = TRWrapper.impactVelocity();
+                if (impactVect != null)
+                {
+                    return new Vector(vect.x, vect.y, vect.z);
+                }
+                else {
+                    throw new KOSException("Impact velocity is not available. Remember to check addons:tr:hasImpact");
+                }
+            }
+            else
+            {
+                throw new KOSUnavailableAddonException("impactVel", "Trajectories");
+            }
+        }         
         private BooleanValue hasImpact()
         {
             if (Available() == true)
@@ -118,6 +142,28 @@ namespace kOS.AddOns.TrajectoriesAddon
                 throw new KOSUnavailableAddonException("hasImpact", "Trajectories");
             }
         }
+        private kOS.Suffixed.Orbit  spaceOrb()
+        {
+            if (shared.Vessel != FlightGlobals.ActiveVessel)
+            {
+                throw new KOSException("You may only call addons:TR:spaceOrbit from the active vessel. Always check addons:tr:hasImpact");
+            }
+            if (Available() == true)
+            {
+                Orbit spaceOrbt = TRWrapper.spaceOrbit();
+                if (spaceOrbt != null)
+                {
+                    return new kOS.Suffixed.Orbit(spaceOrbt);
+                }
+                else {
+                    throw new KOSException("Space Orbit is not available. Remember to check addons:tr:hasImpact");
+                }
+            }
+            else
+            {
+                throw new KOSUnavailableAddonException("spaceOrb", "Trajectories");
+            }
+        }              
         public override BooleanValue Available()
         {
             return TRWrapper.Wrapped();
