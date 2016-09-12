@@ -16,7 +16,7 @@ Compatible with Trajectories 1.4.6.
 
 **Important notes**
 
-Trajectories only predicts the trajectory of the "Active Vessel," which is the vessel with the camera focused on it. `IMPACTPOS`, `PLANNEDVECT`, `SETTARGET`, and `CORRECTEDVECT` will throw exceptions if you try to call them from an inactive vessel or if Trajectories has not calculated an impact position. You should always check if `HASIMPACT` is true before accessing these suffixes.
+Trajectories only predicts the trajectory of the "Active Vessel," which is the vessel with the camera focused on it. `IMPACTPOS`, `IMPACTVEL`, `SPACEORBIT`, `PLANNEDVECT`, `SETTARGET`, and `CORRECTEDVECT` will throw exceptions if you try to call them from an inactive vessel or if Trajectories has not calculated an impact position. You should always check if `HASIMPACT` is true before accessing these suffixes.
 
 For example:
 
@@ -46,6 +46,8 @@ Access structure TRAddon via `ADDONS:TR`.
      :attr:`AVAILABLE`                     bool(readonly)            True if a compatible Trajectories version is installed.
      :attr:`HASIMPACT`                     bool(readonly)            True if Trajectories has calculated an impact position for the current vessel.
      :attr:`IMPACTPOS`                     GeoCoordinates(readonly)  Returns a `LATLNG` with the predicted impact position.
+     :attr:`IMPACTVEL`                     Vector(readonly)          Returns a Vector with the predicted impact velocity.
+     :attr:`SPACEORBIT`                    Orbit(readonly)           Returns an Orbit structure for the predicted orbit after aerobreaking.
      :attr:`PLANNEDVECT`                   Vector(readonly)          Direction to point to follow predicted trajectory.
      :attr:`SETTARGET(position)`           void                      Set Trajectories target.
      :attr:`CORRECTEDVECT`                 Vector(readonly)          A hint about the direction you should go to reach the target.
@@ -73,7 +75,21 @@ Access structure TRAddon via `ADDONS:TR`.
     :access: Get
 
     Estimated impact position.
+    
+.. attribute:: TRAddon:IMPACTVEL
 
+    :type: Vector
+    :access: Get
+
+    Estimated impact Velocity.
+    
+.. attribute:: TRAddon:SPACEORBIT
+
+    :type: Orbit
+    :access: Get
+
+    Estimated Orbit after aerobreaking is complete and atmosphere is exited.
+        
 .. attribute:: TRAddon:PLANNEDVECT
 
     :type: Vector
