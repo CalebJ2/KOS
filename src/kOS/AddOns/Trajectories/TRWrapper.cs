@@ -13,6 +13,8 @@ namespace kOS.AddOns.TrajectoriesAddon
         private static bool? wrapped = null;
         private static Type trajectoriesAPIType = null;
         private static MethodInfo trGetImpactPosition = null;
+        private static MethodInfo trGetSpaceOrbit = null;
+        private static MethodInfo trGetImpactVelocity = null;
         private static MethodInfo trCorrectedDirection = null;
         private static MethodInfo trPlannedDirection = null;
         private static MethodInfo trSetTarget = null;
@@ -37,6 +39,20 @@ namespace kOS.AddOns.TrajectoriesAddon
                 wrapped = false;
                 return;
             }
+            trGetSpaceOrbit = trajectoriesAPIType.GetMethod("getSpaceOrbit");
+            if (trGetSpaceOrbit == null)
+            {
+                Debug.Log("[kOS] Trajectories.API.getSpaceOrbit method is null.");
+                wrapped = false;
+                return;
+            }
+            trGetImpactVelocity = trajectoriesAPIType.GetMethod("getImpactVelocity");
+            if (trGetImpactVelocity == null)
+            {
+                Debug.Log("[kOS] Trajectories.API.getImpactVelocity method is null.");
+                wrapped = false;
+                return;
+            }            
             trCorrectedDirection = trajectoriesAPIType.GetMethod("correctedDirection");
             if (trCorrectedDirection == null)
             {
@@ -76,6 +92,14 @@ namespace kOS.AddOns.TrajectoriesAddon
         public static Vector3? impactVector()
         {
             return (Vector3?)trGetImpactPosition.Invoke(null, new object[] {});
+        }
+        public static Orbit spaceOrbit()
+        {
+            return (Orbit)trGetSpaceOrbit.Invoke(null, new object[] {});
+        }
+        public static Vector3 impactVelocity()
+        {
+            return (Vector3)trGetImpactVelocity.Invoke(null, new object[] {});
         }
         public static Vector3 correctedDirection()
         {
